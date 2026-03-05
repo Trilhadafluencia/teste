@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trilha da Fluência - House & Furniture</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Paleta de Cores da Professora */
+            --dark-blue: #0a2742;
+            --light-blue: #a8c4dc;
+            --off-white: #fffbf6;
+            --terracotta: #a61e00;
+            --champagne: #e2b07e;
+        }
+
+        body {
+            background-color: var(--off-white);
+            color: var(--dark-blue);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--dark-blue);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--champagne);
+            padding-bottom: 15px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .watermark {
+            font-size: 0.85rem;
+            color: var(--light-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(10, 39, 66, 0.06);
+            margin-bottom: 40px;
+            box-sizing: border-box;
+        }
+
+        /* --- Question 1 Styles --- */
+        .q1-item {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--light-blue);
+        }
+        
+        .q1-item:last-child {
+            border-bottom: none;
+        }
+
+        .prompt-text {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--dark-blue);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--light-blue);
+            border-radius: 6px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            color: var(--dark-blue);
+            background-color: var(--off-white);
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--champagne);
+            box-shadow: 0 0 0 2px rgba(226, 176, 126, 0.2);
+        }
+
+        button {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark-blue);
+            color: var(--off-white);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background-color: var(--light-blue);
+            color: var(--dark-blue);
+            transform: translateY(-2px);
+        }
+
+        .btn-show-answer {
+            background-color: var(--terracotta);
+            display: none;
+        }
+
+        .btn-show-answer:hover {
+            background-color: var(--champagne);
+            color: var(--dark-blue);
+        }
+
+        .feedback-msg {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            min-height: 20px;
+        }
+
+        .correct { color: #2e7d32; } 
+        .incorrect { color: var(--terracotta); }
+        .answer-reveal { 
+            color: var(--dark-blue); 
+            background-color: var(--off-white);
+            padding: 10px;
+            border-left: 4px solid var(--champagne);
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* --- Question 2 Styles (Flashcards) --- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .card-scene {
+            perspective: 1000px;
+            height: 220px;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            padding: 25px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(10, 39, 66, 0.08);
+            border: 1px solid var(--light-blue);
+        }
+
+        .card-front {
+            background-color: #ffffff;
+        }
+
+        .card-front:hover {
+            border-color: var(--champagne);
+            box-shadow: 0 8px 25px rgba(226, 176, 126, 0.2);
+        }
+
+        .card-back {
+            background-color: var(--off-white);
+            transform: rotateY(180deg);
+            border-color: var(--champagne);
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--dark-blue);
+            margin-bottom: 15px;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            color: var(--dark-blue);
+            line-height: 1.5;
+        }
+
+        .answer-positive { color: var(--dark-blue); font-weight: 500; margin-bottom: 10px;}
+        .answer-negative { color: var(--terracotta); font-weight: 500; }
+
+        .audio-btn {
+            margin-top: 15px;
+            background: none;
+            border: 2px solid var(--light-blue);
+            color: var(--dark-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            font-size: 1.2rem;
+        }
+
+        .audio-btn:hover {
+            background-color: var(--champagne);
+            border-color: var(--champagne);
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .instruction {
+            font-style: italic;
+            color: var(--light-blue);
+            margin-bottom: 20px;
+        }
+
+        /* --- Question 3 Styles (Audio Recording) --- */
+        .recording-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-record { background-color: var(--terracotta); }
+        .btn-record:hover { background-color: var(--champagne); color: var(--dark-blue); }
+        
+        .btn-stop { background-color: var(--dark-blue); }
+        
+        .btn-send { background-color: var(--champagne); color: var(--dark-blue); font-weight: 600; } 
+        .btn-send:hover { background-color: var(--light-blue); color: var(--dark-blue); }
+        
+        button:disabled {
+            background-color: #e0e0e0 !important;
+            color: #9e9e9e !important;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        #audio-playback {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 400px;
+            display: none;
+            border-radius: 30px;
+        }
+
+        #upload-status {
+            margin-top: 15px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .recording-indicator {
+            display: none;
+            color: var(--terracotta);
+            font-weight: bold;
+            animation: blink 1s infinite;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="watermark">Trilha da Fluência - Inglês para Líderes</div>
+        <h1>House & Furniture</h1>
+    </div>
+
+    <!-- Part 1 -->
+    <div class="container">
+        <h2>Part 1: Write the Questions</h2>
+        <p class="instruction">Transform the cues into questions using "Is there..." or "Are there...". Don't forget the question mark!</p>
+        
+        <div id="q1-container">
+            <!-- As questões 1 serão geradas via JavaScript aqui -->
+        </div>
+    </div>
+
+    <!-- Part 2 -->
+    <div class="container">
+        <h2>Part 2: Answer the Questions</h2>
+        <p class="instruction">Click on the cards to flip them and see the possible answers. Click the speaker icon to hear the pronunciation.</p>
+        
+        <div class="card-grid" id="q2-container">
+            <!-- Os flashcards serão gerados via JavaScript aqui -->
+        </div>
+    </div>
+
+    <!-- Part 3 -->
+    <div class="container">
+        <h2>Part 3: Speaking Practice</h2>
+        <p class="instruction">Now it's your turn! Record your voice answering this question: <br><br><strong>"Are there any plants in your living room?"</strong></p>
+        
+        <div class="recording-indicator" id="recording-indicator">🔴 Recording...</div>
+        
+        <div class="recording-controls">
+            <button id="btn-record" class="btn-record" onclick="startRecording()">🎤 Start Recording</button>
+            <button id="btn-stop" class="btn-stop" onclick="stopRecording()" disabled>⏹️ Stop</button>
+            <button id="btn-send" class="btn-send" onclick="sendAudioToDrive()" disabled>📤 Send to Teacher</button>
+        </div>
+
+        <div style="text-align: center;">
+            <audio id="audio-playback" controls></audio>
+        </div>
+        <div id="upload-status"></div>
+    </div>
+
+    <script>
+        // --- Dados da Questão 1 ---
+        const part1Data = [
+            { id: 'a', cue: "a mirror in the hallway?", expected: ["is there a mirror in the hallway?", "is there a mirror in the hallway"] },
+            { id: 'b', cue: "bookshelves in the living room?", expected: ["are there any bookshelves in the living room?", "are there bookshelves in the living room?", "are there any bookshelves in the living room", "are there bookshelves in the living room"] },
+            { id: 'c', cue: "a coffee maker in the kitchen?", expected: ["is there a coffee maker in the kitchen?", "is there a coffee maker in the kitchen"] },
+            { id: 'd', cue: "an armchair in the bedroom?", expected: ["is there an armchair in the bedroom?", "is there an armchair in the bedroom"] },
+            { id: 'e', cue: "pictures in the home office?", expected: ["are there any pictures in the home office?", "are there pictures in the home office?", "are there any pictures in the home office"] }
+        ];
+
+        // --- Dados da Questão 2 ---
+        const part2Data = [
+            { q: "Is there a mirror in the hallway?", pos: "Yes, there is a mirror.", neg: "No, there isn't a mirror." },
+            { q: "Are there any bookshelves in the living room?", pos: "Yes, there are some bookshelves.", neg: "No, there aren't any bookshelves." },
+            { q: "Is there a coffee maker in the kitchen?", pos: "Yes, there is a coffee maker.", neg: "No, there isn't a coffee maker." },
+            { q: "Is there an armchair in the bedroom?", pos: "Yes, there is an armchair.", neg: "No, there isn't an armchair." },
+            { q: "Are there any pictures in the home office?", pos: "Yes, there are some pictures.", neg: "No, there aren't any pictures." }
+        ];
+
+        // --- Renderizar Questão 1 ---
+        const q1Container = document.getElementById('q1-container');
+        
+        part1Data.forEach((item, index) => {
+            const html = `
+                <div class="q1-item">
+                    <div class="prompt-text">${item.id}) / ${item.cue}</div>
+                    <div class="input-group">
+                        <input type="text" id="input-${index}" placeholder="Type your question here...">
+                        <button onclick="checkQ1(${index})">Check</button>
+                        <button id="show-btn-${index}" class="btn-show-answer" onclick="showAnswerQ1(${index})">Show Answer</button>
+                    </div>
+                    <div id="feedback-${index}" class="feedback-msg"></div>
+                    <div id="reveal-${index}" class="answer-reveal"><b>Correct Answer:</b> ${item.expected[0]}</div>
+                </div>
+            `;
+            q1Container.innerHTML += html;
+        });
+
+        // Função para checar resposta da Questão 1
+        function checkQ1(index) {
+            const input = document.getElementById(`input-${index}`).value.trim().toLowerCase();
+            const feedback = document.getElementById(`feedback-${index}`);
+            const showBtn = document.getElementById(`show-btn-${index}`);
+            const expectedAnswers = part1Data[index].expected;
+
+            // Limpeza básica para ignorar espaços duplos
+            const cleanInput = input.replace(/\s+/g, ' ');
+
+            if (cleanInput === "") {
+                feedback.innerHTML = `<span class="incorrect">Please type an answer first.</span>`;
+                return;
+            }
+
+            if (expectedAnswers.includes(cleanInput)) {
+                feedback.innerHTML = `<span class="correct">Excellent! That's correct.</span>`;
+                showBtn.style.display = 'none';
+                document.getElementById(`input-${index}`).style.borderColor = '#2e7d32'; // Verde
+            } else {
+                feedback.innerHTML = `<span class="incorrect">Not quite. Try again or check the answer.</span>`;
+                showBtn.style.display = 'inline-block';
+                document.getElementById(`input-${index}`).style.borderColor = 'var(--terracotta)';
+            }
+        }
+
+        // Função para mostrar resposta correta
+        function showAnswerQ1(index) {
+            document.getElementById(`reveal-${index}`).style.display = 'block';
+            document.getElementById(`show-btn-${index}`).style.display = 'none';
+        }
+
+        // --- Renderizar Questão 2 (Flashcards) ---
+        const q2Container = document.getElementById('q2-container');
+
+        part2Data.forEach((item, index) => {
+            const html = `
+                <div class="card-scene" onclick="flipCard(this)">
+                    <div class="card">
+                        <div class="card-face card-front">
+                            <div class="card-title">Question</div>
+                            <div class="card-text">${item.q}</div>
+                            <button class="audio-btn" title="Listen" onclick="event.stopPropagation(); speak('${item.q.replace(/'/g, "\\'")}')">🔊</button>
+                        </div>
+                        <div class="card-face card-back">
+                            <div class="answer-positive">✓ ${item.pos}</div>
+                            <div class="answer-negative">✗ ${item.neg}</div>
+                            <button class="audio-btn" title="Listen to answers" onclick="event.stopPropagation(); speak('${item.pos.replace(/'/g, "\\'")} ... ${item.neg.replace(/'/g, "\\'")}')">🔊</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            q2Container.innerHTML += html;
+        });
+
+        function flipCard(sceneElement) {
+            const card = sceneElement.querySelector('.card');
+            card.classList.toggle('is-flipped');
+        }
+
+        // --- Text-to-Speech (Leitura de Áudio Nativa do Navegador) ---
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Cancela áudios anteriores
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // Sotaque em inglês
+                utterance.rate = 0.9;     // Velocidade moderada
+                utterance.pitch = 1;      
+                
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Sorry, your browser doesn't support Text-to-Speech.");
+            }
+        }
+
+        // --- Audio Recording & Google Drive Upload via Apps Script ---
+        let mediaRecorder;
+        let audioChunks = [];
+        let finalAudioBlob = null;
+
+        // =========================================================================
+        // ATENÇÃO PROFESSORA: COLOQUE AQUI A URL DO SEU GOOGLE APPS SCRIPT
+        // =========================================================================
+        const APPS_SCRIPT_URL = "COLE_SUA_URL_AQUI"; 
+        // =========================================================================
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    finalAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const audioUrl = URL.createObjectURL(finalAudioBlob);
+                    const playback = document.getElementById('audio-playback');
+                    playback.src = audioUrl;
+                    playback.style.display = 'inline-block';
+                    
+                    document.getElementById('btn-send').disabled = false;
+                };
+
+                mediaRecorder.start();
+                
+                document.getElementById('btn-record').disabled = true;
+                document.getElementById('btn-stop').disabled = false;
+                document.getElementById('btn-send').disabled = true;
+                document.getElementById('recording-indicator').style.display = 'block';
+                document.getElementById('upload-status').innerHTML = '';
+                
+            } catch (err) {
+                console.error("Microphone error:", err);
+                alert("Please allow microphone access to record.");
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== "inactive") {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop()); // Liberta o microfone
+                
+                document.getElementById('btn-record').disabled = false;
+                document.getElementById('btn-record').innerText = "🎤 Record Again";
+                document.getElementById('btn-stop').disabled = true;
+                document.getElementById('recording-indicator').style.display = 'none';
+            }
+        }
+
+        function sendAudioToDrive() {
+            if (!finalAudioBlob) return;
+            
+            if (APPS_SCRIPT_URL === "COLE_SUA_URL_AQUI") {
+                alert("Professora, é necessário configurar a URL do seu Google Apps Script no código (linha 351) para o envio funcionar.");
+                return;
+            }
+
+            const statusDiv = document.getElementById('upload-status');
+            const sendBtn = document.getElementById('btn-send');
+            
+            statusDiv.innerHTML = "<span style='color: var(--dark-blue);'>⏳ Uploading to Google Drive... Please wait.</span>";
+            sendBtn.disabled = true;
+
+            // Converter o ficheiro de áudio para Base64
+            const reader = new FileReader();
+            reader.readAsDataURL(finalAudioBlob);
+            reader.onloadend = function() {
+                const base64data = reader.result.split(',')[1]; 
+
+                const payload = {
+                    base64: base64data,
+                    mimeType: 'audio/webm',
+                    filename: 'Student_Audio_' + new Date().getTime() + '.webm'
+                };
+
+                fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                })
+                .then(response => {
+                    statusDiv.innerHTML = "<span style='color: #2e7d32;'>✅ Audio sent successfully! The teacher will review it soon.</span>";
+                    sendBtn.innerText = "📤 Sent!";
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    statusDiv.innerHTML = "<span style='color: var(--terracotta);'>❌ Error sending audio. Please try again.</span>";
+                    sendBtn.disabled = false;
+                });
+            };
+        }
+    </script>
+</body>
+</html>
